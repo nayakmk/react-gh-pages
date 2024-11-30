@@ -54,10 +54,25 @@ jobs:
             cp -r src/public/* out/ || true
           fi
 
+      - name: Create release artifact
+        run: |
+          cd out
+          zip -r ../release.zip ./*
+          cd ..
+          mkdir -p release-artifact
+          mv release.zip release-artifact/
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifact
+          path: release-artifact/release.zip
+          retention-days: 1
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: out
@@ -94,16 +109,11 @@ jobs:
             git push origin $AUTO_TAG
           fi
 
-      - name: Download artifact
+      - name: Download release artifact
         uses: actions/download-artifact@v3
         with:
-          name: github-pages
-          path: out
-
-      - name: Create Release Archive
-        run: |
-          cd out
-          zip -r ../release.zip ./*
+          name: release-artifact
+          path: ./
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
