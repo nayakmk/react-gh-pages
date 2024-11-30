@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // Ensure public assets are copied to the output directory
+  distDir: 'dist',
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
 };
 
 export default nextConfig;

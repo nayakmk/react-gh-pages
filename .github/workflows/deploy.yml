@@ -37,13 +37,19 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /react-gh-pages
 
+      - name: Copy public assets
+        run: |
+          if [ -d "public" ]; then
+            cp -r public/* dist/
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
