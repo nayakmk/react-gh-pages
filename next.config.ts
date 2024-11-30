@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
   generateBuildId: async () => {
     return process.env.BUILD_ID || 'development'
   },
+  publicRuntimeConfig: {
+    staticFolder: '/src/public',
+  },
+  dir: {
+    public: 'src/public',
+  },
 };
 
 export default nextConfig;

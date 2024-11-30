@@ -50,8 +50,8 @@ jobs:
 
       - name: Prepare deployment
         run: |
-          if [ -d "public" ]; then
-            cp -r public/* out/ || true
+          if [ -d "src/public" ]; then
+            cp -r src/public/* out/ || true
           fi
 
       - name: Setup Pages
@@ -88,6 +88,8 @@ jobs:
             AUTO_TAG="v0.0.0-${SHORT_SHA}"
             echo "VERSION=${AUTO_TAG}" >> $GITHUB_OUTPUT
             echo "IS_TAG=false" >> $GITHUB_OUTPUT
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
             git tag $AUTO_TAG
             git push origin $AUTO_TAG
           fi
