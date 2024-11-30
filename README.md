@@ -1,66 +1,23 @@
-# Next.js GitHub Pages
+# Next.js Contentlayer Example
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with modern tooling and automated GitHub Pages deployment.
+## Demo
 
-## Features
+View the deployed project: [Demo](https://next-contentlayer-example.vercel.app/)
 
-- 🚀 Next.js 14 with App Router
-- 📦 TypeScript for type safety
-- 🎨 TailwindCSS for styling
-- 🔄 Automatic deployments to GitHub Pages
-- 📦 Automatic releases with version tagging
-- 📁 Organized project structure with src directory
+## Try it Now
 
-## Getting Started
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](http://gitpod.io/#https://github.com/contentlayerdev/next-contentlayer-example)
 
-First, install dependencies:
+## Local Installation
 
-```bash
-pnpm install
-```
+Clone the project:
 
-Then, run the development server:
+    git clone git@github.com:contentlayerdev/next-contentlayer-example.git
 
-```bash
-pnpm dev
-```
+Install dependencies:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    yarn
 
-## Project Structure
+Run dev server:
 
-```
-.
-├── src/
-│   ├── app/        # Next.js app router pages
-│   └── public/     # Static assets
-├── .github/        # GitHub Actions workflows
-├── next.config.ts  # Next.js configuration
-└── ...            # Other configuration files
-```
-
-## Deployment
-
-The project automatically deploys to GitHub Pages when:
-- Pushing to the main branch
-- Creating a new tag (v*.*.*)
-- Manually triggering the workflow
-
-### Automatic Releases
-- Every push creates an auto-tagged release (v0.0.0-[commit-sha])
-- Manual tags (v*.*.* format) create full releases
-- Each release includes:
-  - Built static files
-  - Build timestamp
-  - Deployment URL
-
-## Environment Variables
-
-- `NEXT_PUBLIC_BASE_PATH`: Set to repository name for GitHub Pages
-- `BUILD_ID`: Automatically generated for each build
-
-## Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [GitHub Pages](https://pages.github.com/)
-- [TailwindCSS](https://tailwindcss.com/)
+    yarn dev
