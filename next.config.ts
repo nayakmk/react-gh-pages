@@ -5,17 +5,18 @@ const nextConfig: NextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
     unoptimized: true,
+    remotePatterns: [],
   },
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
   generateBuildId: async () => {
     return process.env.BUILD_ID || 'development'
   },
-  publicRuntimeConfig: {
-    staticFolder: '/src/public',
+  experimental: {
+    optimizePackageImports: ['@icons-pack/react-simple-icons'],
   },
-  dir: {
-    public: 'src/public',
-  },
+  transpilePackages: [],
+  reactStrictMode: true,
+  swcMinify: true,
 };
 
 export default nextConfig;

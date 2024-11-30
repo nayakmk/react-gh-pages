@@ -48,10 +48,19 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: /react-gh-pages
           BUILD_ID: ${{ env.BUILD_ID }}
 
-      - name: Prepare deployment
+      - name: Prepare static files
         run: |
+          # Ensure the static directory exists
+          mkdir -p out/_next/static
+          
+          # Copy public files
           if [ -d "src/public" ]; then
-            cp -r src/public/* out/ || true
+            cp -r src/public/* out/
+          fi
+          
+          # Copy Next.js static files
+          if [ -d ".next/static" ]; then
+            cp -r .next/static/* out/_next/static/
           fi
 
       - name: Create release artifact
