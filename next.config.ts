@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  distDir: '.next',
   generateBuildId: async () => {
     return process.env.BUILD_ID || 'development'
   },
