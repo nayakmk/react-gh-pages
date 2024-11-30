@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -32,15 +34,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Generate Build ID
+        id: build_id
+        run: echo "BUILD_ID=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_ENV
+
       - name: Build project
         run: pnpm build
         env:
           NEXT_PUBLIC_BASE_PATH: /react-gh-pages
+          BUILD_ID: ${{ env.BUILD_ID }}
 
-      - name: Copy public assets
+      - name: Prepare deployment
         run: |
+          mkdir -p ./out
+          cp -r out/* ./out/
           if [ -d "public" ]; then
-            cp -r public/* dist/
+            cp -r public/* ./out/
           fi
 
       - name: Setup Pages
@@ -49,8 +58,24 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./out
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./out/**/*
+          name: Release ${{ github.ref_name }}
+          body: |
+            Release ${{ github.ref_name }}
+            Build ID: ${{ env.BUILD_ID }}
+            Deployment URL: https://nayakmk.github.io/react-gh-pages
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

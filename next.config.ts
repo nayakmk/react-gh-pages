@@ -1,14 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',  // Enable static exports
+  output: 'export',
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
     unoptimized: true,
   },
-  // Ensure public assets are copied to the output directory
-  distDir: 'dist',
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  distDir: '.next',
+  generateBuildId: async () => {
+    return process.env.BUILD_ID || 'development'
+  },
 };
 
 export default nextConfig;
