@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build && pnpm run copy-static",
-    "copy-static": "powershell -Command \"New-Item -ItemType Directory -Force -Path out\\_next\\static; if (Test-Path src\\public) { Copy-Item -Path src\\public\\* -Destination out\\ -Recurse -Force }; if (Test-Path .next\\static) { Copy-Item -Path .next\\static\\* -Destination out\\_next\\static\\ -Recurse -Force }\"",
+    "copy-static": "node scripts/copy-static.js",
     "start": "next start",
     "lint": "next lint"
   },
