@@ -5,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - 'v*.*.*'
   workflow_dispatch:
 
 permissions:
@@ -16,10 +16,14 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    outputs:
+      build_id: ${{ env.BUILD_ID }}
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -62,23 +66,59 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  create-release:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate version
+        id: generate_version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            echo "IS_TAG=true" >> $GITHUB_OUTPUT
+          else
+            SHORT_SHA=$(git rev-parse --short HEAD)
+            AUTO_TAG="v0.0.0-${SHORT_SHA}"
+            echo "VERSION=${AUTO_TAG}" >> $GITHUB_OUTPUT
+            echo "IS_TAG=false" >> $GITHUB_OUTPUT
+            git tag $AUTO_TAG
+            git push origin $AUTO_TAG
+          fi
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: github-pages
+          path: out
+
       - name: Create Release Archive
-        if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd out
           zip -r ../release.zip ./*
 
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.generate_version.outputs.VERSION }}
           files: release.zip
-          name: Release ${{ github.ref_name }}
+          name: Release ${{ steps.generate_version.outputs.VERSION }}
           body: |
-            Release ${{ github.ref_name }}
-            Build ID: ${{ env.BUILD_ID }}
+            Release ${{ steps.generate_version.outputs.VERSION }}
+            Build ID: ${{ needs.build-and-deploy.outputs.build_id }}
             Deployment URL: https://nayakmk.github.io/react-gh-pages
+            
+            ## What's Changed
+            ${{ steps.generate_version.outputs.IS_TAG == 'true' && '* Manual release' || '* Auto-generated release from commit' }}
+            * Build timestamp: ${{ needs.build-and-deploy.outputs.build_id }}
+            * Commit: ${{ github.sha }}
+            * Includes full static export of the Next.js application
           draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: ${{ steps.generate_version.outputs.IS_TAG != 'true' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
